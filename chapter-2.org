@@ -1,0 +1,32 @@
+* Chapter 2: Lazy Evaluation and $-Notation
+
++ Okasaki describes the $-notation, which are primitives for delay and force
+
+** $-notation
+
++ To suspend an expression ~e~, we do ~$e~
++ The scope of ~$~ extends as far to the right as possible
+  + ~$f x~ parses as ~$(f x)~ and not ~$(f) x~
++ ~force~ is integrated with pattern matching (~force~ is automatically invoked)
++ definition of ~force~ operator
+
+#+BEGIN_SRC
+fun force($x) = x
+#+END_SRC
+
+** In clojure
+
++ ~delay~ and ~force~
++ Implementation of ~take~
+
+#+BEGIN_SRC clojure
+(comment "TODO")
+
+(defn take
+  [n s]
+  (delay (when (pos? n)
+           (when-let [pair (force s)]
+             [(first pair) (take (dec n) (second pair))]))))
+
+@(take 2 (delay [1 (delay [2 (delay [3 (delay nil)])])]))
+#+END_SRC
