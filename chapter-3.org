@@ -1,0 +1,95 @@
+* Chapter 3: Amortization and Persistence via Lazy Evaluation
+
+** Traditional Amortization
+
++ It might be okay when a few operations run with greater complexity
+  + As long as the total cost of the sequence has a lower bound
++ Allows a wide design space of possible solutions
+  + Yields new solutions that are simpler and faster than worst-case solutions
+    with equivalent bounds
++ Amortization allows for occasional operations to have actual costs that
+  exceed their amortized costs
+  + The occasional operations that have higher actual costs are *expensive*
+  + Those with lower actual costs are *cheap*
+
+** Banker's method
+
++ Accumulated savings are represented as credits associated with individual
+  locations in the data structure
++ Credits are used to pay for future accesses to these locations
++ Amortized cost = actual cost + credits allocated by operation - credits spent by operation
+
+\[
+a_i = t_i + c_i - \bar{c}_i
+\]
+
+*** Example, on array doubling
+
++ Charge 3 tokens for each insertion
+  + 1 token is the raw cost of insertion (the write to array location)
+  + "Save" the other two tokens on the array
+
+| action                 | num elements | capacity | saved tokens | remarks                         |
+| initialization         |            0 |        1 |            0 |                                 |
+| push value             |            1 |        1 |            1 | can save 1 less just this round |
+| double (to push value) |            1 |        2 |            0 | paid 1 token to copy value      |
+| push value             |            2 |        2 |            2 |                                 |
+| double (to push value) |            2 |        4 |            0 | paid 2 tokens to copy values    |
+| push value             |            3 |        4 |            2 |                                 |
+| push value             |            4 |        4 |            4 |                                 |
+| double (to push value) |            4 |        8 |            0 | paid to copy values             |
+| push value             |            5 |        8 |            2 |                                 |
+| ...                    |          ... |      ... |          ... | ...                             |
+
++ Since consistently charging 3 tokens per push provides enough to pay for doubling
+  + Insertion on a dynamic array is of O(1) amortized time complexity
+
+** Physicist's method
+
++ Describe a function ($\Phi$) that maps an object (d) to a real number $\Phi(d)$
++ Amortized cost = actual cost + increase in potential between the current and previous state of the object
+
+\[
+a_i = t_i + \Phi(d_i) - \Phi(d_{i-1})
+\]
+
++ Choose $\Phi$ such that
+  + If $t_i$ is small, the potential increases
+  + If $t_i$ is large, the potential decreases by the same scale
+
+*** Example, on array doubling
+
++ (size is the same thing as num elements)
++ Let $\Phi(h) = 2 \times size - capacity$
+  + $\Phi(h) = 2 \times 0 - 0 = 0
+  + $\Phi(h) = 2 \times size - capacity > 0
+    + Since $size > \frac{capacity}{2}$
+    + If size is less than half of capacity, the doubling wouldn't have happened
+
+**** Cost of pushing element i (without array doubling)
+
+\begin{align*}
+a_i &= t_i + \Phi(d_i) - \Phi(d_{i-1}) \\
+    &= t_i + 2 \times size_i - capacity_i - (2 \times size_{i-1} - capacity_{i-1}) \\
+    &= t_i + 2 \times (size_i - size_{i-1}) \\
+    &= 1 + 2 \times 1 \\
+    &= 3
+\end{align*}
+
++ $capacity_i = capacity_{i-1}$ when not doubling
++ $size_i - size_{i-1} = 1$ always
+
+**** Cost of pushing element i (without array doubling)
+
+\begin{align*}
+a_i &= t_i + \Phi(d_i) - \Phi(d_{i-1}) \\
+    &= t_i + 2 \times size_i - capacity_i - (2 \times size_{i-1} - capacity_{i-1}) \\
+    &= size_{i-1} + 1 + 2 - size_{i-1} \\
+    &= 3
+\end{align*}
+
++ $size_{i-1} = capacity_{i-1}$ before doubling
++ After doubling, $capacity_i / 2 + 1= size_i$
+  + Because by definition doubling doubles size
+  + And there's a $+1$ because of pushing
++ $t_i$ is $size_{i-1} + 1$ because of the copy, plus 1 more for the push
