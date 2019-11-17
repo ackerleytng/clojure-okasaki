@@ -14,19 +14,7 @@
 fun force($x) = x
 #+END_SRC
 
-** In clojure
+** Definition of a stream and stream-cell
 
-+ ~delay~ and ~force~
-+ Implementation of ~take~
-
-#+BEGIN_SRC clojure
-(comment "TODO")
-
-(defn take
-  [n s]
-  (delay (when (pos? n)
-           (when-let [pair (force s)]
-             [(first pair) (take (dec n) (second pair))]))))
-
-@(take 2 (delay [1 (delay [2 (delay [3 (delay nil)])])]))
-#+END_SRC
++ A stream is a suspended stream-cell ~(delay <stream-cell>)~
++ A stream-cell is either ~nil~, or ~(cons <value> <stream>)~
