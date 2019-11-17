@@ -1,9 +1,8 @@
 (defpackage :tests/common
   (:use :cl
         :lparallel
-        :rove)
-  (:import-from :common
-                #:s->list))
+        :rove
+        :common))
 (in-package :tests/common)
 
 (deftest test-s->list

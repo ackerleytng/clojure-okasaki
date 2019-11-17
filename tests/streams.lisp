@@ -1,12 +1,11 @@
 (defpackage :tests/streams
   (:use :cl
-        :rove)
+        :rove
+        :streams)
   (:import-from :common
                 #:s->list)
   (:import-from :chapter-2
-                #:s-take)
-  (:import-from :streams
-                #:range))
+                #:s-take))
 (in-package :tests/streams)
 
 (deftest test-range
