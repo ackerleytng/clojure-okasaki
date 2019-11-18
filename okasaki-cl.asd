@@ -5,7 +5,8 @@
                         :components
                         ((:file "common")
                          (:file "streams")
-                         (:file "chapter-2" :depends-on ("common")))))
+                         (:file "chapter-2" :depends-on ("common"))
+                         (:file "chapter-3-batched-queue"))))
   :description ""
   :in-order-to ((test-op (test-op "okasaki-cl/tests"))))
 
@@ -16,6 +17,7 @@
                         :components
                         ((:file "common")
                          (:file "chapter-2")
-                         (:file "streams"))))
+                         (:file "streams")
+                         (:file "chapter-3-batched-queue"))))
   :description "Test system for okasaki-cl"
   :perform (test-op (op c) (symbol-call :rove :run c)))
